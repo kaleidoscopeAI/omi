@@ -1310,8 +1310,10 @@ async def check_setup(uid: str = Query(...)):
 async def disconnect(uid: str = Query(...), sig: str = Query("")):
     """Disconnect Notion."""
     from notion_disconnect_auth import require_disconnect_auth
-    require_disconnect_auth(uid, sig)
     clean_uid = _sanitize_uid(uid)
+    # home() signs clean_uid, so verify clean_uid. Fall back to the raw uid so an
+    # unsanitizable uid still fails closed (401/503) instead of skipping auth.
+    require_disconnect_auth(clean_uid or uid, sig)
     if not clean_uid:
         return RedirectResponse(url="/")
     delete_notion_tokens(clean_uid)

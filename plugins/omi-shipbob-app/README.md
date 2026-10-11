@@ -116,3 +116,21 @@ rejected with `401` (or `503` when the secret is not configured).
 ## License
 
 MIT
+
+## Disconnect Link Signing
+
+The Disconnect button on the settings page links to `/disconnect?uid=...&sig=...`.
+`sig` is an HMAC-SHA256 of the uid keyed with `SHIPBOB_DISCONNECT_SECRET`, and the endpoint verifies
+it before deleting any tokens.
+
+```env
+SHIPBOB_DISCONNECT_SECRET=change-me
+```
+
+- Unset: `/disconnect` returns `503` and no links are signed, so Disconnect is
+  unavailable until the variable is configured.
+- Set, but the request has a missing or wrong `sig`: `401`.
+- Set this on every deployment **before** rolling out this change, otherwise
+  every Disconnect button fails.
+- This blocks forged links (CSRF). It does not authenticate the viewer, because
+  the signature is issued on the settings page itself.
