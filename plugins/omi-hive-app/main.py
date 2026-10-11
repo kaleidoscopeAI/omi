@@ -600,6 +600,7 @@ async def home(request: Request, uid: Optional[str] = None):
         "user_info": user_info,
         "projects": projects,
         "default_project": default_project,
+        "disconnect_sig": sig,  # without this the Disconnect href loses &sig= and /disconnect 401s
     })
 
 

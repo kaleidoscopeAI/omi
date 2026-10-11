@@ -1665,6 +1665,11 @@ checks:
     triggers: ["plugins/omi-shopify-app/**", ".github/checks-manifest.yaml"]
     lanes: ["local", "ci"]
     reason: "#15589: GET /disconnect accepted any caller-supplied uid and revoked that user's OAuth credentials with no authentication; disconnect links must now carry an HMAC-SHA256 signature of the uid keyed with the shared disconnect secret, and the handler must fail closed with 503 when unconfigured and 401 on missing or wrong signatures"
+  - id: disconnect-sig-wiring-tests
+    command: ["python3", "plugins/test_disconnect_sig_wiring.py"]
+    triggers: ["plugins/omi-hive-app/**", "plugins/omi-linear-app/**", "plugins/omi-shipbob-app/**", "plugins/omi-shopify-app/**", "plugins/test_disconnect_sig_wiring.py", ".github/checks-manifest.yaml"]
+    lanes: ["local", "ci"]
+    reason: "#15589: home() computed the disconnect signature but the connected-view template context omitted disconnect_sig, so the Disconnect href lost &sig= and /disconnect returned 401 whenever the disconnect secret was configured; every home() setup.html render must carry disconnect_sig"
 exempt:
   - path: ".github/scripts/check-desktop-beta-freshness.py"
     reason: "hourly doctor job hits the public beta appcast; behavioral coverage is desktop-beta-freshness-tests"

@@ -451,7 +451,8 @@ async def home(request: Request, uid: Optional[str] = None):
         "user_profile": user_profile,
         "teams": teams,
         "default_team": default_team,
-        "oauth_url": f"/auth/linear?uid={urllib.parse.quote(uid, safe='')}"
+        "oauth_url": f"/auth/linear?uid={urllib.parse.quote(uid, safe='')}",
+        "disconnect_sig": sig,  # without this the Disconnect href loses &sig= and /disconnect 401s
     })
 
 
